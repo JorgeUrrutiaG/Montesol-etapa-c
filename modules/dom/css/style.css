@@ -350,7 +350,6 @@
         margin: 10px 15px;
     }
 
-
     /* ----------------------- Contenido Principal ----------------------- */
 
     /* Modificación para integrar las tablas dentro de tu .main redondeado */
@@ -358,11 +357,11 @@
         grid-area: main;
         height: calc((100vh - var(--topbar-height)) - var(--footer-height) - var(--padding-main));
         margin: 10px 10px;
-        padding: 10px 10px;
+        padding: 10px;
         background-color: #f4f6f9;
         /* Le damos un fondo claro interno para que resalten tus datos */
         border-radius: 20px;
-        overflow-y: auto;
+        /* overflow-y: auto; */
         /* Permite scroll vertical interno si tienes muchas propiedades */
     }
 
@@ -395,45 +394,7 @@
         display: inline-block;
     }
 
-    /* Contenedor de la tabla adaptado a tus bordes redondeados */
-    .table-container {
-        background-color: var(--white-color);
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        padding: 15px;
-        overflow-x: auto;
-        /* Scroll horizontal si las columnas no caben en pantallas chicas */
-        border: 1px solid #e5e7eb;
-    }
 
-    /* Estilo de la tabla de datos */
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-        font-size: 0.9rem;
-    }
-
-    /* Cabeceras oscuras como tu topbar */
-    .data-table th {
-        background-color: var(--bg-dark-deep);
-        color: var(--white-color);
-        padding: 12px 10px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-    }
-
-    /* Filas de la tabla */
-    .data-table td {
-        padding: 12px 10px;
-        border-bottom: 1px solid #e5e7eb;
-        color: #333333;
-    }
-
-    /* Efecto visual al pasar el cursor por las filas */
-    .data-table tbody tr:hover {
-        background-color: #f9fafb;
-    }
 
     /* Estilo para los paneles informativos (GGCC, Control de Dinero, etc) */
     .panel-mensaje {

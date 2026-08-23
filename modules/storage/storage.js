@@ -1,4 +1,4 @@
-import { propiedades } from "../../dev/datos.js";
+import { propiedades } from "./datos.js";
 
 export const prop = {
     obtenerPropiedades() {
