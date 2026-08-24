@@ -1,0 +1,6 @@
+export const footer=`
+    <p>&copy; 2026 Jorge Urrutia. Todos los derechos reservados.</p>
+        <div class="footer-status">
+            <span class="status-dot online"></span> Servidores Activos
+        </div>
+`;

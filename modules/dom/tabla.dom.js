@@ -1,4 +1,7 @@
- import { tabla } from "../layouts/tabla.js"
+ import { prop } from "../storage/storage.js";
+ import { tabla } from "../layouts/tabla.js";
+ import { DATOS_LOCALES_PROPIEDADES , CABECERAS_LOCALES_PROPIEDADES } from "../app.js";
+ 
  export const TablaDOM = {
         // Estado interno de la paginación y filtros
         paginaActual: 1,
@@ -113,172 +116,21 @@
         /**
          * Orquesta la petición al backend y la primera renderización
          */
-        async cargarTareas() {
-            this.elementos.cuerpoTabla().innerHTML = '<tr><td colspan="10" style="text-align:center">Cargando datos...</td></tr>';
-            try {
-                // Consumimos el adaptador que centraliza google.script.run
-                const data = await AppScriptService.obtenerTareas();
-                DATOS_LOCALES = data.filas;
-                CABECERAS_LOCALES = data.cabeceras;
+        // async cargarPropiedades() {
+        //     this.elementos.cuerpoTabla().innerHTML = '<tr><td colspan="10" style="text-align:center">Cargando datos...</td></tr>';
+        //     try {
+        //         // Consumimos el adaptador que centraliza google.script.run
+        //         // const data = await AppScriptService.obtenerTareas();
+        //         DATOS_LOCALES_PROPIEDADES = prop.obtenerPropiedades;
+        //         CABECERAS_LOCALES_PROPIEDADES = prop.obtenerCabecerasPropiedades;
 
-                this.paginaActual = 1;
-                this.estadoActual = 'Todas';
-                this.renderizar(DATOS_LOCALES);
-            } catch (err) {
-                showToast('error', err.message);
-            }
-        },
-
-        /**
-         * Maneja los clics en la barra lateral para filtrar categorías
-         */
-        filtrarPorEstado(estado, elemento) {
-            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('sidebar-link--active'));
-            elemento.querySelector('.sidebar-link').classList.add('sidebar-link--active');
-
-            this.estadoActual = estado;
-            this.elementos.titulo().innerText = `TICKETS: ${estado.toUpperCase()}`;
-
-            const buscador = this.elementos.buscador();
-            if (buscador) buscador.value = '';
-
-            this.paginaActual = 1;
-            this.aplicarFiltrosYBuscar();
-        },
-
-        /**
-         * Filtra el arreglo global basado en el estado y la búsqueda por texto
-         */
-        aplicarFiltrosYBuscar() {
-            const textoBusqueda = this.elementos.buscador()?.value.toLowerCase().trim() || '';
-
-            let resultado = DATOS_LOCALES;
-            if (this.estadoActual !== 'Todas') {
-                resultado = DATOS_LOCALES.filter(fila => fila[3] === this.estadoActual);
-            }
-
-            if (textoBusqueda !== '') {
-                resultado = resultado.filter(fila => {
-                    return fila.some(celda => {
-                        if (celda === null || celda === undefined) return false;
-                        return celda.toString().toLowerCase().includes(textoBusqueda);
-                    });
-                });
-            }
-
-            this.renderizar(resultado);
-        },
-        /**
-     * Construye el HTML dinámico de la tabla utilizando atributos de datos seguros
-     */
-        renderizar(filas) {
-            // LIMPIEZA COMPLEMENTARIA: Borra el cuadro de métricas si venimos de la pantalla de Control
-            document.querySelector('.metrics-grid')?.remove();
-
-            // 2. RESTAURACIÓN DE TU LAYOUT REAL:
-            // Volver a mostrar la barra de botones completa para las vistas normales
-            const barraBotones = document.querySelector('.btns-bar');
-            if (barraBotones) barraBotones.style.display = 'flex'; // Cambiado a flex para mantener su alineación nativa
-
-            const thead = this.elementos.cabeceraTabla();
-            const tbody = this.elementos.cuerpoTabla();
-            if (!thead || !tbody) return;
-
-            this.datosFiltradosActuales = filas;
-            thead.innerHTML = `<tr>${CABECERAS_LOCALES.map(h => `<th>${h}</th>`).join('')}<th class='text-center'>Acciones</th></tr>`;
-
-            if (filas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${CABECERAS_LOCALES.length + 1}" style="text-align:center; padding: 20px; color: #6b7280;">No se encontraron tickets coordinados.</td></tr>`;
-                this.renderizarControlesPaginacion();
-                return;
-            }
-
-            const inicio = (this.paginaActual - 1) * this.filasPorPagina;
-            const fin = inicio + this.filasPorPagina;
-            const filasPagina = filas.slice(inicio, fin);
-
-            tbody.innerHTML = filasPagina.map((fila) => {
-                const idTarea = fila[0];
-                const estado = fila[3];
-
-                // Codificamos el JSON de la fila para evitar que caracteres especiales rompan el HTML alternativo
-                const filaJsonSeguro = encodeURIComponent(JSON.stringify(fila));
-
-                return `
-                <tr data-json="${filaJsonSeguro}" style="cursor: pointer;"> 
-                    ${fila.map((celda, i) => {
-                    if (i === 3) return `<td class='text-center'><span class="badge estado-${celda.toLowerCase()}">${celda}</span></td>`;
-                    if (i === 2) return `<td class='text-center'><span class="badge prioridad-${celda.toLowerCase()}">${celda}</span></td>`;
-                    return `<td>${celda}</td>`;
-                }).join('')}
-                    <td class="acciones-celda text-center">
-                        <div>
-                            ${estado === 'Abierta' ? `<button class="btn-mini btn-close" data-id="${idTarea}" title="Cerrar Tarea"><i class="bi bi-unlock"></i></button>` : '<i class="bi bi-lock tarea-cerrada btn-lock"></i>'}
-                            <button class="btn-mini btn-delete" data-id="${idTarea}" title="Eliminar"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            this.renderizarControlesPaginacion();
-        },
-
-        /**
-         * Dibuja los botones del paginador inferior de forma dinámica
-         */
-        renderizarControlesPaginacion() {
-            const paginador = this.elementos.paginador();
-            if (!paginador) return;
-
-            paginador.innerHTML = "";
-            const totalPaginas = Math.ceil(this.datosFiltradosActuales.length / this.filasPorPagina);
-
-            if (totalPaginas <= 1) return;
-
-            const maxBotonesVisibles = 5;
-            let paginaInicio = Math.max(1, this.paginaActual - Math.floor(maxBotonesVisibles / 2));
-            let paginaFin = Math.min(totalPaginas, paginaInicio + maxBotonesVisibles - 1);
-
-            if (paginaFin - paginaInicio + 1 < maxBotonesVisibles) {
-                paginaInicio = Math.max(1, paginaFin - maxBotonesVisibles + 1);
-            }
-
-
-
-            // --- FUNCIÓN INTERNA: Crea un botón limpio con atributos data ---
-            const crearBoton = (numero) => {
-                const boton = document.createElement("button");
-                boton.textContent = numero;
-                boton.classList.add("btn-pagina");
-                boton.setAttribute('data-pagina', numero); // Guardamos la página aquí
-
-                if (numero === this.paginaActual) {
-                    boton.classList.add("activo");
-                }
-                paginador.appendChild(boton);
-            };
-
-            const crearPuntosSuspensivos = () => {
-                const span = document.createElement("span");
-                span.textContent = "...";
-                span.style.padding = "8px 12px";
-                span.style.color = "#6b7280";
-                paginador.appendChild(span);
-            };
-
-            if (paginaInicio > 1) {
-                crearBoton(1);
-                if (paginaInicio > 2) crearPuntosSuspensivos();
-            }
-
-            for (let i = paginaInicio; i <= paginaFin; i++) {
-                crearBoton(i);
-            }
-
-            if (paginaFin < totalPaginas) {
-                if (paginaFin < totalPaginas - 1) crearPuntosSuspensivos();
-                crearBoton(totalPaginas);
-            }
-        }
+        //         this.paginaActual = 1;
+        //         this.estadoActual = 'Todas';
+        //         this.renderizar(DATOS_LOCALES_PROPIEDADES);
+        //     } catch (err) {
+        //         showToast('error', err.message);
+        //     }
+        // },
+    
     };
 

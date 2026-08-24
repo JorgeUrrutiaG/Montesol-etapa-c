@@ -1,8 +1,17 @@
 import { sidebar } from "../layouts/sidebar.js";
+import { footer } from "../layouts/footer.js";
+import { topbar } from "../layouts/topbar.js";
+import { TablaDOM } from "./tabla.dom.js";
 
 export const NavigationDOM = {
     insertarSidebarEnDom() {
         document.querySelector('.sidebar').innerHTML = sidebar;
+    },
+    insertarFooterEnDom() {
+        document.querySelector('.footer').innerHTML = footer;
+    },
+    insertarTopbarEnDOM() {
+        document.querySelector('.topbar').innerHTML = topbar;
     },
     elementos: {
         listaMenu: () => document.getElementById('sidebar-list'),
@@ -25,7 +34,7 @@ export const NavigationDOM = {
             this._procesarRuta(enlace);
         });
     },
-    
+
 
     /**
      * Modifica las clases CSS de la Sidebar de forma centralizada.
@@ -40,35 +49,37 @@ export const NavigationDOM = {
      */
     _procesarRuta(enlace) {
         const idRuta = enlace.id;
-        const estadoFiltro = enlace.getAttribute('data-estado');
+        const dataEstado = enlace.getAttribute('data-estado');
 
         // Caso 1: Es un enlace que filtra la tabla existente
         if (estadoFiltro) {
-            TablaDOM.estadoActual = estadoFiltro;
+            TablaDOM.estadoActual = dataEstado;
 
             // Actualizamos el título usando la misma lógica centralizada
             const titulo = document.getElementById('titulo');
-            if (titulo) titulo.innerText = `TICKETS: ${estadoFiltro.toUpperCase()}`;
+            if (titulo) titulo.innerText = `${estadoFiltro.toUpperCase()}`;
 
             // Limpiamos buscador y refrescamos los datos filtrados
             const buscador = document.getElementById('buscador');
             if (buscador) buscador.value = '';
 
             TablaDOM.paginaActual = 1;
-            TablaDOM.aplicarFiltrosYBuscar();
+            // TablaDOM.aplicarFiltrosYBuscar();
             return;
         }
 
         // Caso 2: Es un cambio de pantalla o acción de utilidades
         switch (idRuta) {
+            case 'link-propiedades': ;
+                break;
             case 'link-control':
                 // showToast('info', 'Cargando panel de Control...');
-                ControlDOM.renderizar();
+                // ControlDOM.renderizar();
                 // Aquí controlas la visibilidad de tus secciones HTML futuras
                 break;
             case 'link-reportes':
                 // Dispara directamente tu servicio de Excel que ya modularizamos
-                ExcelService.descargar();
+                // ExcelService.descargar();
                 break;
             default:
                 console.warn(`Ruta no manejada: ${idRuta}`);

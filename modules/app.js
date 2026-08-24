@@ -4,8 +4,8 @@ import {NavigationDOM} from "./dom/navigation.dom.js";
 import { TablaDOM } from "./dom/tabla.dom.js";
 
 // 1. Variables Globales del Estado de la Aplicación
-let DATOS_LOCALES_PROPIEDADES = prop.obtenerPropiedades();
-let CABECERAS_LOCALES_PROPIEDADES = prop.obtenerCabecerasPropiedades();
+export let DATOS_LOCALES_PROPIEDADES = prop.obtenerPropiedades();
+export let CABECERAS_LOCALES_PROPIEDADES = prop.obtenerCabecerasPropiedades();
 let USUARIO_ACTUAL = null;
 
 // 2. Elementos Clave del DOM
@@ -22,16 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
     NavigationDOM.inicializar();
     TablaDOM.inicializar();
     // ModalDOM.inicializar();
-    
-    // 2. Arrancar la carga asíncrona de datos
-    
-     
     // Tu render de tablas e inicio normal de la app...
     // renderizarTablaPropiedades(DATOS_LOCALES_PROPIEDADES);
 });
 
 async function iniciarSistema() {
-        NavigationDOM.insertarSidebarEnDom();
+    NavigationDOM.insertarSidebarEnDom();
+    NavigationDOM.insertarFooterEnDom();
+    NavigationDOM.insertarTopbarEnDOM();
     TablaDOM.insertarTablaEnDOM();
     try {
         await Promise.all([
