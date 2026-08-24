@@ -1,7 +1,14 @@
 import { prop } from "./storage/storage.js";
+// 1. Importaciones de Servicios (Controladores de Lógica)
+import { PropiedadesService } from "./services/propiedades.service.js";
+
 import { UserDOM } from "./dom/user.dom.js";
 import {NavigationDOM} from "./dom/navigation.dom.js";
 import { TablaDOM } from "./dom/tabla.dom.js";
+//(Importando los HTML planos de la carpeta layouts)
+import { sidebar } from "./layouts/sidebar.js";
+import { footer } from "./layouts/footer.js";
+import { topbar } from "./layouts/topbar.js";
 
 // 1. Variables Globales del Estado de la Aplicación
 export let DATOS_LOCALES_PROPIEDADES = prop.obtenerPropiedades();
@@ -20,24 +27,31 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function iniciarSistema() {
-    //Inserta los layouts 
-    NavigationDOM.insertarSidebarEnDom();
-    NavigationDOM.insertarFooterEnDom();
-    NavigationDOM.insertarTopbarEnDOM();
-    TablaDOM.insertarTablaEnDOM();
     try {
+        // 1. Inyección inicial y única de la estructura base de la página
+        document.querySelector('.sidebar').innerHTML = sidebar;
+        document.querySelector('.footer').innerHTML = footer;
+        document.querySelector('.topbar').innerHTML = topbar;
+
+        // 2. Cargar datos desde los servicios
+        DATOS_LOCALES_PROPIEDADES = PropiedadesService.obtenerTodo();
+        CABECERAS_LOCALES_PROPIEDADES = PropiedadesService.obtenerCabeceras();
+
+        // 3. Inicializar componentes y sus escuchadores de eventos una vez que el HTML ya existe
+        NavigationDOM.inicializar();
+        TablaDOM.inicializar();
+
+        // 4. Renderizar pantalla inicial
+        TablaDOM.renderizarTabla(CABECERAS_LOCALES_PROPIEDADES, DATOS_LOCALES_PROPIEDADES);
+
+        // 5. Cargas asíncronas secundarias
         await Promise.all([
-            USUARIO_ACTUAL= UserDOM.cargarInformacionUsuario(),
-            // TablaDOM.cargarTareas()
+            USUARIO_ACTUAL = await UserDOM.cargarInformacionUsuario()
         ]);
+
     } catch (err) {
         console.error("Error crítico durante la inicialización:", err);
-        if (typeof showToast === 'function') {
-            showToast('error', 'Error al sincronizar los datos iniciales de la aplicación.');
-        }
     }
-
-
 }
 
  // Tu render de tablas e inicio normal de la app...

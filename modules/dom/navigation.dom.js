@@ -1,32 +1,34 @@
-import { sidebar } from "../layouts/sidebar.js";
-import { footer } from "../layouts/footer.js";
-import { topbar } from "../layouts/topbar.js";
-import { TablaDOM } from "./tabla.dom.js";
-
+/**
+ * Vista modular encargada exclusivamente de la navegación y eventos del menú lateral.
+ */
 export const NavigationDOM = {
-    insertarSidebarEnDom() {
-        document.querySelector('.sidebar').innerHTML = sidebar;
-    },
-    insertarFooterEnDom() {
-        document.querySelector('.footer').innerHTML = footer;
-    },
-    insertarTopbarEnDOM() {
-        document.querySelector('.topbar').innerHTML = topbar;
-    },
-    elementos: {
+    _refs: {
         listaMenu: () => document.getElementById('sidebar-list'),
-        enlaces: () => document.querySelectorAll('.sidebar-link')
+        enlaces: () => document.querySelectorAll('.sidebar-link'),
+        tituloTopbar: () => document.getElementById('titulo') // Ajustado al ID de tu topbar.js
     },
+    
+    // Aquí guardaremos la función puente que nos enviará app.js
+    _onCambioSeccionCallback: null,
+
     /**
-     * Inicializa un único escuchador de eventos global para todo el menú (Delegación).
+     * Inicializa el escuchador global del menú y recibe la función puente.
+     * @param {Function} callback - Función que se ejecutará al cambiar de sección
      */
-    inicializar() {
-        this.elementos.listaMenu()?.addEventListener('click', (e) => {
-            // Buscamos el enlace (.sidebar-link) más cercano al elemento cliqueado
+    inicializar(callback) {
+        const menu = this._refs.listaMenu();
+        if (!menu) {
+            console.error("NavigationDOM: No se encontró el contenedor '#sidebar-list'.");
+            return;
+        }
+
+        // Guardamos la función en nuestra variable interna
+        this._onCambioSeccionCallback = callback;
+
+        menu.addEventListener('click', (e) => {
             const enlace = e.target.closest('.sidebar-link');
             if (!enlace) return;
 
-            // DETENER DUPLICADOS DE RAÍZ:
             e.preventDefault();
             e.stopImmediatePropagation();
 
@@ -35,59 +37,36 @@ export const NavigationDOM = {
         });
     },
 
-
-    /**
-     * Modifica las clases CSS de la Sidebar de forma centralizada.
-     */
     _activarEnlaceVisual(enlaceSeleccionado) {
-        this.elementos.enlaces().forEach(link => link.classList.remove('sidebar-link--active'));
+        this._refs.enlaces().forEach(link => link.classList.remove('sidebar-link--active'));
         enlaceSeleccionado.classList.add('sidebar-link--active');
     },
 
-    /**
-     * Evalúa qué acción o pantalla disparar según el ID o atributos del enlace.
-     */
     _procesarRuta(enlace) {
         const idRuta = enlace.id;
-        const dataEstado = enlace.getAttribute('data-estado');
-
-        // Caso 1: Es un enlace que filtra la tabla existente
-        if (estadoFiltro) {
-            TablaDOM.estadoActual = dataEstado;
-
-            // Actualizamos el título usando la misma lógica centralizada
-            const titulo = document.getElementById('titulo');
-            if (titulo) titulo.innerText = `${estadoFiltro.toUpperCase()}`;
-
-            // Limpiamos buscador y refrescamos los datos filtrados
-            const buscador = document.getElementById('buscador');
-            if (buscador) buscador.value = '';
-
-            TablaDOM.paginaActual = 1;
-            // TablaDOM.aplicarFiltrosYBuscar();
-            return;
+        const nuevoTitulo = enlace.textContent.trim().toUpperCase();
+        
+        const tituloContenedor = this._refs.tituloTopbar();
+        if (tituloContenedor) {
+            tituloContenedor.innerText = nuevoTitulo;
         }
 
-        // Caso 2: Es un cambio de pantalla o acción de utilidades
+        // Mapeamos el ID del clic a un nombre de sección limpio
+        let seccionNombre = "";
         switch (idRuta) {
-            case 'link-propiedades': ;
-                break;
-            case 'link-control':
-                // showToast('info', 'Cargando panel de Control...');
-                // ControlDOM.renderizar();
-                // Aquí controlas la visibilidad de tus secciones HTML futuras
-                break;
-            case 'link-reportes':
-                // Dispara directamente tu servicio de Excel que ya modularizamos
-                // ExcelService.descargar();
-                break;
+            case 'link-tareas':     seccionNombre = "PANEL PRINCIPAL"; break;
+            case 'link-abiertas':    seccionNombre = "PROPIEDADES DISPONIBLES"; break;
+            case 'link-resueltas':   seccionNombre = "GASTOS COMUNES (GGCC)"; break;
+            case 'link-control':     seccionNombre = "CONTROL DE DINERO"; break;
+            case 'link-reportes':    seccionNombre = "REPORTES IMPRIMIBLES"; break;
             default:
                 console.warn(`Ruta no manejada: ${idRuta}`);
+                return;
+        }
+
+        // Si app.js nos dio una función, la ejecutamos pasándole la sección
+        if (typeof this._onCambioSeccionCallback === 'function') {
+            this._onCambioSeccionCallback(seccionNombre);
         }
     }
 };
-
-// Arrancamos el escuchador del menú al cargar el archivo
-document.addEventListener('DOMContentLoaded', () => {
-    NavigationDOM.inicializar();
-});

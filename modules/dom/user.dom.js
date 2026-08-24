@@ -1,37 +1,64 @@
-
+/**
+ * Vista modular encargada exclusivamente de renderizar y gestionar 
+ * la información del usuario en la barra superior (Topbar).
+ */
 export const UserDOM = {
-    // Almacenamos las referencias al DOM para no repetir querySelectors en todo el código
-    elementos: {
-        nombre: () => document.querySelector('.user-name'),
-        correo: () => document.getElementById('user-correo')
+    // Almacenamos las referencias reales del DOM una vez inicializado el componente
+    _refs: {
+        nombre: null,
+        correo: null
     },
 
     /**
-     * Coordina la carga de datos y actualiza los elementos visuales.
+     * Captura de forma segura los elementos del DOM.
+     * Previene errores si el Topbar aún no se ha inyectado.
      */
-    cargarInformacionUsuario() {
+    _inicializarReferencias() {
+        this._refs.nombre = document.querySelector('.user-name');
+        this._refs.correo = document.getElementById('user-correo');
+
+        if (!this._refs.nombre || !this._refs.correo) {
+            console.warn("UserDOM: No se encontraron los contenedores de usuario en el DOM. Asegúrate de que el Topbar ya fue inyectado.");
+        }
+    },
+
+    /**
+     * Coordina la carga de datos de manera asíncrona y actualiza los elementos visuales.
+     * @returns {Promise<Object|null>} Retorna los datos del usuario o null si no hay sesión.
+     */
+    async cargarInformacionUsuario() {
+        // Asegurar que las referencias del DOM estén capturadas
+        this._inicializarReferencias();
+
         try {
-            // 1. Solicitamos los datos al servicio especializado
-            // const usuario = await UserService.obtenerDatos();
+            // 1. Simulación de datos (En el futuro aquí usarás: await UserService.obtenerDatos())
             const usuarioSimulado = {
                 displayName: "Jorge Urrutia",
                 email: "urrutia.a.jorge@gmail.com"
             };
 
+            // 2. Renderizar en la interfaz de forma segura
             if (usuarioSimulado) {
-                // 2. Renderizamos en la interfaz utilizando las referencias
-                this.elementos.nombre().innerText = usuarioSimulado.displayName;
-                this.elementos.correo().innerText = usuarioSimulado.email;
+                if (this._refs.nombre) this._refs.nombre.innerText = usuarioSimulado.displayName;
+                if (this._refs.correo) this._refs.correo.innerText = usuarioSimulado.email;
                 return usuarioSimulado;
             } else {
-                this.elementos.nombre().innerText = "Invitado (Sin iniciar sesión)";
+                this._establecerEstadoInvitado();
                 return null;
             }
 
         } catch (err) {
-            this.elementos.nombre().innerText = "Invitado (Sin iniciar sesión)";
-            // 3. Control de errores visuales centralizado
-            console.log('error', `No se pudo cargar el perfil: ${err.message}`);
+            console.error("Error al procesar el perfil de usuario:", err);
+            this._establecerEstadoInvitado();
+            return null;
         }
+    },
+
+    /**
+     * Helper interno para limpiar la interfaz en caso de error o sesión cerrada
+     */
+    _establecerEstadoInvitado() {
+        if (this._refs.nombre) this._refs.nombre.innerText = "Invitado (Sin iniciar sesión)";
+        if (this._refs.correo) this._refs.correo.innerText = "";
     }
 };
