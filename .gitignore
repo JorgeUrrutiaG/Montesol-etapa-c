@@ -1,0 +1,32 @@
+# --- Editores de Código e IDEs ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs y Temporales ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# --- Entorno y Secretos (Para cuando agregues Firebase SDK o Node) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- Dependencias (Por si a futuro usas npm/Vite/Webpack) ---
+node_modules/
+/dist
+/build

@@ -8,12 +8,6 @@ export let DATOS_LOCALES_PROPIEDADES = prop.obtenerPropiedades();
 export let CABECERAS_LOCALES_PROPIEDADES = prop.obtenerCabecerasPropiedades();
 let USUARIO_ACTUAL = null;
 
-// 2. Elementos Clave del DOM
-// const mainContent = document.getElementById("main-content");
-// const topbarTitulo = document.getElementById("titulo");
-// const sidebarLinks = document.querySelectorAll(".sidebar-link");
-// const goHomeBtn = document.getElementById("go-home-btn");
-
 // Para probarlo localmente ANTES de conectar Firebase, puedes simularlo así:
 document.addEventListener("DOMContentLoaded", () => {
     iniciarSistema();
@@ -22,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
     NavigationDOM.inicializar();
     TablaDOM.inicializar();
     // ModalDOM.inicializar();
-    // Tu render de tablas e inicio normal de la app...
-    // renderizarTablaPropiedades(DATOS_LOCALES_PROPIEDADES);
+   
 });
 
 async function iniciarSistema() {
+    //Inserta los layouts 
     NavigationDOM.insertarSidebarEnDom();
     NavigationDOM.insertarFooterEnDom();
     NavigationDOM.insertarTopbarEnDOM();
@@ -45,6 +39,9 @@ async function iniciarSistema() {
 
 
 }
+
+ // Tu render de tablas e inicio normal de la app...
+    // renderizarTablaPropiedades(DATOS_LOCALES_PROPIEDADES);
 
 // 3. Funciones de Renderizado de la Interfaz
 
