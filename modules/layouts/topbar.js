@@ -1,8 +1,6 @@
 export const topbar=`
     <div class="topbar-buttons">
-            <button class="btn go-home-btn" id="go-home-btn" title="Actualizar">
-                <i class="bi bi-arrow-clockwise"></i>
-            </button>
+            <h2>Logo</h2>
             <div class="topbar-divider"></div>
         </div>
 

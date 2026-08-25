@@ -1,7 +1,11 @@
+import { UserService } from "../services/user.service.js";
+
 /**
  * Vista modular encargada exclusivamente de renderizar y gestionar 
  * la información del usuario en la barra superior (Topbar).
  */
+
+
 export const UserDOM = {
     // Almacenamos las referencias reales del DOM una vez inicializado el componente
     _refs: {
@@ -32,16 +36,13 @@ export const UserDOM = {
 
         try {
             // 1. Simulación de datos (En el futuro aquí usarás: await UserService.obtenerDatos())
-            const usuarioSimulado = {
-                displayName: "Jorge Urrutia",
-                email: "urrutia.a.jorge@gmail.com"
-            };
-
+            const usuario = UserService.getUsuario();
+            console.log(usuario);
             // 2. Renderizar en la interfaz de forma segura
-            if (usuarioSimulado) {
-                if (this._refs.nombre) this._refs.nombre.innerText = usuarioSimulado.displayName;
-                if (this._refs.correo) this._refs.correo.innerText = usuarioSimulado.email;
-                return usuarioSimulado;
+            if (usuario) {
+                if (this._refs.nombre) this._refs.nombre.innerText = usuario.displayName;
+                if (this._refs.correo) this._refs.correo.innerText = usuario.email;
+                return usuario;
             } else {
                 this._establecerEstadoInvitado();
                 return null;
@@ -60,5 +61,5 @@ export const UserDOM = {
     _establecerEstadoInvitado() {
         if (this._refs.nombre) this._refs.nombre.innerText = "Invitado (Sin iniciar sesión)";
         if (this._refs.correo) this._refs.correo.innerText = "";
-    }
+    },
 };
