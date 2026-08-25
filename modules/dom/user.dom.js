@@ -5,18 +5,13 @@ import { UserService } from "../services/user.service.js";
  * la información del usuario en la barra superior (Topbar).
  */
 
-
 export const UserDOM = {
     // Almacenamos las referencias reales del DOM una vez inicializado el componente
     _refs: {
         nombre: null,
         correo: null
     },
-
-    /**
-     * Captura de forma segura los elementos del DOM.
-     * Previene errores si el Topbar aún no se ha inyectado.
-     */
+  
     _inicializarReferencias() {
         this._refs.nombre = document.querySelector('.user-name');
         this._refs.correo = document.getElementById('user-correo');
