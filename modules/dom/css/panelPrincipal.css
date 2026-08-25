@@ -1,0 +1,135 @@
+/* ==========================================================================
+   PANEL DE CONTROL PRINCIPAL (DASHBOARD)
+   ========================================================================== */
+
+/* Contenedor principal con espaciado fluido */
+.panel-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Encabezado de bienvenida animado */
+.panel-welcome {
+    margin-bottom: 2.5rem;
+}
+
+.panel-welcome h2 {
+    font-size: 1.8rem;
+    color: #1e293b; /* Azul grisáceo oscuro */
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.panel-welcome p {
+    font-size: 1rem;
+    color: #64748b; /* Gris texto secundario */
+    margin: 0;
+}
+
+/* Grilla adaptable para las Tarjetas Métricas */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Tarjeta Métrica Individual (Card) */
+.card-metric {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px; /* Bordes suaves modernos */
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Efecto suave */
+}
+
+/* Efecto al pasar el mouse por encima de la tarjeta */
+.card-metric:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+
+/* Contenedor del Icono dentro de la tarjeta */
+.card-icon {
+    background-color: #f0fdf4; /* Fondo verde menta pastel suave */
+    color: #16a34a; /* Icono verde */
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Cambiar color para la segunda tarjeta (Usuarios) */
+.dashboard-cards .card-metric:nth-child(2) .card-icon {
+    background-color: #eff6ff; /* Fondo azul pastel */
+    color: #2563eb; /* Icono azul */
+}
+
+/* Textos dentro de la tarjeta */
+.card-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.card-info h3 {
+    font-size: 2rem;
+    color: #0f172a;
+    margin: 0;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Contenedor Informativo de Roles */
+.panel-roles-info {
+    background: #f8fafc; /* Fondo gris claro limpio */
+    border-left: 4px solid #475569; /* Borde lateral de acento */
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.panel-roles-info h3 {
+    font-size: 1.1rem;
+    color: #334155;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-roles-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.panel-roles-info li {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.5;
+}
+
+.panel-roles-info li strong {
+    color: #0f172a;
+}

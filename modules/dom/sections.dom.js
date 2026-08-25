@@ -1,26 +1,31 @@
 import { PropiedadesService } from "../services/propiedades.service.js";
+import { UserService } from "../services/user.service.js"; // Importamos usuarios
 import { TablaDOM } from "./tabla.dom.js";
+import { PanelDOM } from "./panel.dom.js"; // Importamos el nuevo Panel
 
-/**
- * Vista controladora encargada de coordinar qué datos solicitar 
- * y qué interfaz renderizar según la sección activa del sistema.
- */
 export const SectionsDOM = {
     
-    /**
-     * Administra el cambio de contenido en el contenedor principal
-     * @param {string} seccion - Nombre de la sección seleccionada
-     */
     manejarCambioSeccion(seccion) {
         const cabeceras = PropiedadesService.obtenerCabeceras();
 
         if (seccion === "PANEL PRINCIPAL") {
-            const datos = PropiedadesService.obtenerTodas();
-            TablaDOM.renderizarTabla(cabeceras, datos);
+            // 1. Obtenemos las longitudes de los datos simulados de forma dinámica
+            const totalDeptos = PropiedadesService.obtenerTodas().length;
+            
+            // Simulación del conteo de usuarios desde tu UserService / Storage
+            let totalUsers = 1; 
+            if (typeof UserService !== 'undefined' && UserService.obtenerTotalUsuarios) {
+                totalUsers = UserService.obtenerTotalUsuarios();
+            }
+
+            // 2. Renderizamos el panel con los totales calculados
+            PanelDOM.renderizarPanel(totalDeptos, totalUsers);
+
         } else if (seccion === "PROPIEDADES DISPONIBLES") {
-            // A futuro conectarás aquí: PropiedadesService.obtenerDisponibles()
+            // MUDADO AQUÍ: La tabla ahora se despliega exclusivamente en el menú Propiedades
             const datos = PropiedadesService.obtenerTodas(); 
             TablaDOM.renderizarTabla(cabeceras, datos);
+
         } else {
             // Secciones estáticas (GGCC, Control de Dinero, Reportes)
             TablaDOM.mostrarMensajeEstatico(seccion);

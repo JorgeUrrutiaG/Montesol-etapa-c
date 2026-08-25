@@ -2,7 +2,7 @@ import { PropiedadesService } from "./services/propiedades.service.js";
 import { UserDOM } from "./dom/user.dom.js";
 import { UserService } from "./services/user.service.js";
 import { NavigationDOM } from "./dom/navigation.dom.js";
-import { TablaDOM } from "./dom/tabla.dom.js";
+// import { TablaDOM } from "./dom/tabla.dom.js";
 import { SectionsDOM } from "./dom/sections.dom.js"; // <-- Nueva importación
 
 // Importación de layouts HTML planos
@@ -26,7 +26,7 @@ async function iniciarSistema() {
 
         // 3. Inicializar componentes visuales de las secciones
         NavigationDOM.inicializar(SectionsDOM.manejarCambioSeccion);
-        TablaDOM.inicializar();
+        // TablaDOM.inicializar();
 
         // 4. Renderizar la vista inicial del Panel Principal inmediatamente
         SectionsDOM.manejarCambioSeccion("PANEL PRINCIPAL");
